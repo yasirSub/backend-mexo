@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: mexo-backend
+    runtime: php
+    plan: free
+    buildCommand: composer install --no-dev --optimize-autoloader && php artisan config:cache && php artisan route:cache && php artisan view:cache
+    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: error
+      # Database - Update these with your Aiven MySQL credentials
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        sync: false  # Set this in Render Dashboard
+      - key: DB_PORT
+        sync: false  # Set this in Render Dashboard
+      - key: DB_DATABASE
+        sync: false  # Set this in Render Dashboard
+      - key: DB_USERNAME
+        sync: false  # Set this in Render Dashboard
+      - key: DB_PASSWORD
+        sync: false  # Set this in Render Dashboard
+      # Add other environment variables as needed
+      - key: APP_URL
+        sync: false  # Will be set automatically by Render
+
