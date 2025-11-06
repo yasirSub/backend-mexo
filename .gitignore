@@ -3,6 +3,7 @@
 .env
 .env.backup
 .env.production
+envofrender.txt
 .phpactor.json
 .phpunit.result.cache
 /.fleet
