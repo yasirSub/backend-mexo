@@ -29,8 +29,31 @@ Route::get('/storage/{folder}/{filename}', [App\Http\Controllers\Api\ImageContro
 
 // Public endpoint to return the requester's IP address
 Route::get('/ip', function (Request $request) {
+    // Get IP from various proxy headers (Render uses proxies)
+    $ip = $request->header('X-Forwarded-For');
+    if ($ip) {
+        // X-Forwarded-For can contain multiple IPs, get the first one
+        $ip = explode(',', $ip)[0];
+        $ip = trim($ip);
+    }
+    
+    // Fallback to other headers
+    if (!$ip) {
+        $ip = $request->header('X-Real-IP');
+    }
+    
+    // Final fallback to Laravel's ip() method
+    if (!$ip) {
+        $ip = $request->ip();
+    }
+    
     return response()->json([
-        'ip' => $request->ip(),
+        'ip' => $ip ?: 'unknown',
+        'headers' => [
+            'X-Forwarded-For' => $request->header('X-Forwarded-For'),
+            'X-Real-IP' => $request->header('X-Real-IP'),
+            'CF-Connecting-IP' => $request->header('CF-Connecting-IP'),
+        ],
     ]);
 });
 
